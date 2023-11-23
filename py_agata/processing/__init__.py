@@ -157,8 +157,12 @@ def retime_glucose(data, timestep):
     check_data_columns(data)
 
     data_temp = copy(data)
-    start_time = pd.to_datetime(data_temp.t.values[0]).to_pydatetime()
-    start_time = start_time.replace(second=0)
+    
+    start_time_raw = pd.to_datetime(data_temp.t.values[0]).to_pydatetime()
+    rounded_second = round(start_time_raw.second/60)*60
+    offset = rounded_second-start_time_raw.second
+    start_time = start_time_raw + datetime.timedelta(seconds = offset)
+    
     end_time = pd.to_datetime(data_temp.t.values[-1]).to_pydatetime()
 
     new_t = np.arange(start_time, end_time, timedelta(minutes=timestep)).astype(datetime)
